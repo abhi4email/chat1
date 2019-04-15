@@ -6,8 +6,10 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       
-      $(function () {
+      $(document).ready(function() {
+
         var socket = io();
+
         $('form').submit(function(e){
           e.preventDefault(); // prevents page reloading
           socket.emit('chat message', $('#m').val());
@@ -15,11 +17,18 @@
           return false;
         });
 
-        socket.on('chat message', function(msg){
-          $('#messages').append($('<li>').text(msg));
+        socket.on('chat message', function(data){
+          $('#messages').append($('<li>').text(data.username+': '+data.msg));
+        });
+
+        $('#send_username').click(function(){
+          
+          socket.emit('change_username',{username:$('#username').val()});  
+
         });
 
       });
+
 
     </script>
     <style>
@@ -34,6 +43,14 @@
     </style>
   </head>
   <body>
+
+    <section>
+      <div id="change_username">
+        <input id="username" type="text" />
+        <button id="send_username" type="button">Change username</button>
+      </div>
+    </section>
+
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
